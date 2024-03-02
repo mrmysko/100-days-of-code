@@ -96,5 +96,34 @@ def pizza():
     print(f"You ordered {pizzaz} pizzaz, total comes out to ${total}.")
 
 
+def love():
+    # This does not handle names with more than one first and surname.
+
+    first_name1, last_name1 = input("What is your name? ").split()
+    first_name2, last_name2 = input("What is their name? ").split()
+
+    first_names = first_name1 + first_name2
+    last_names = last_name1 + last_name2
+
+    score1 = 0
+    score2 = 0
+
+    for i in first_names:
+        if i.upper() in "TRUE":
+            score1 += 1
+
+    for i in last_names:
+        if i.upper() in "LOVE":
+            score2 += 1
+
+    score_str = str(score1) + str(score2)
+    if 90 < int(score_str) < 10:
+        print(f"Your score is {score_str}. You go together like coke and mentos.")
+    elif 50 >= int(score_str) >= 40:
+        print(f"Your score is {score_str}. You are alright together.")
+    else:
+        print(f"Your score is {score_str}.")
+
+
 if __name__ == "__main__":
-    pizza()
+    love()
