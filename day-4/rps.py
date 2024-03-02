@@ -1,12 +1,22 @@
 import random
+import os
+import csv
 
 # Todo - Add file maniulation, make a leaderboard that persists between games.
 # Todo - Add an options menu where u can customize a username for the leaderboard.
 # Todo - Ascii-art for hands.
 # Todo - Repeatedly clear and draw the console, giving it a graphical effect.
+# Todo - Autoplay mode. - Game plays itself with a 1 second sleep or something.
 
 
 def main():
+
+    # Create CSV-file.
+    with open("leaderbaord.csv", "w", newline="") as file:
+        writer = csv.writer(file)
+        field = ["name", "games", "wins"]
+
+        writer.writerow(field)
 
     choices = ["ROCK", "PAPER", "SCISSORS"]
     wins = 0
@@ -40,8 +50,14 @@ def main():
             if again == "N":
                 print("Thank you for playing!")
                 break
+
+            # Clear console on new game.
+            os.system("cls")
         except ValueError:
             print("Invalid choice.")
+
+        # write_csv = ["name", games, wins]
+        # writer.writerow(write_csv)
 
 
 if __name__ == "__main__":
