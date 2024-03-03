@@ -10,8 +10,6 @@ def main():
 
     print("Welcome to password generator.")
 
-    password = []
-
     while True:
         try:
             pass_num = int(input("How many passwords do you want to generate?: ") or 1)
@@ -26,22 +24,32 @@ def main():
         except ValueError:
             print("Only numbers allowed.")
 
-    os.system("clear")
-    print(f"Generateing {pass_num} passwords:\n")
+    clear_console()
+    print(f"Generating {pass_num} passwords:\n")
 
     for i in range(pass_num):
+        password = []
         for i in range(spec_len):
             password.append(random.choice(special_chars))
 
         for i in range(digit_len):
             password.append(random.choice(digit_chars))
 
-        while len(password) < total_len:
+        while len(password) != total_len:
             password.append(random.choice(chars))
-            random.shuffle(password)
-            password_str = "".join(password)
+
+        random.shuffle(password)
+        password_str = "".join(password)
 
         print(password_str)
+
+
+def clear_console():
+    """Clears the console on both windows and unix systems."""
+    command = "clear"
+    if os.name == "nt":
+        command = "cls"
+    os.system(command)
 
 
 if __name__ == "__main__":
