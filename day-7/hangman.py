@@ -5,6 +5,7 @@ import time
 
 # Todo - Keep the hangman on win-state.
 # Todo - Save word_list between runs to minimize network traffic.
+# Todo - Hints.
 
 
 def main():
@@ -81,6 +82,48 @@ def draw_board(word: str, solved: list, wrong_guess: int):
 
     clear_console()
 
+    # This seems kinda redundant, having a function "draw board" that calls
+    # another function to draw the hangman...
+    # But how would I draw the hangman on a win-state otherwise if I clear the board
+    # on winning?
+    print_hangman(wrong_guess)
+
+    for i, value in enumerate(word):
+        if solved[i] == 1:
+            print(f"{value} ", end="")
+        else:
+            print("_ ", end="")
+    print()
+
+
+def end(word, solved, wrong_guess):
+    """Checks if an end-state is reached."""
+
+    max_guess = 6
+
+    if wrong_guess >= max_guess:
+        clear_console()
+        print_hangman(wrong_guess)
+        print(f'Oh no, he\'s dead! The word was "{word}".')
+    elif not 0 in solved:
+        clear_console()
+        print_hangman(wrong_guess)
+        print(f'You won! The word was "{word}".')
+    else:
+        # If not in end-state, return to main function.
+        return
+
+    again = input("Would you like to play again? (Y/N): ").upper()
+
+    if again == "N":
+        print("Thank you for playing!")
+        exit()
+    else:
+        main()
+
+
+def print_hangman(wrong_guess):
+
     hangman = [
         """
      +---+
@@ -141,47 +184,6 @@ def draw_board(word: str, solved: list, wrong_guess: int):
     ]
 
     print(hangman[wrong_guess])
-
-    for i, value in enumerate(word):
-        if solved[i] == 1:
-            print(f"{value} ", end="")
-        else:
-            print("_ ", end="")
-    print()
-
-
-def end(word, solved, wrong_guess):
-    """Checks if an end-state is reached."""
-
-    max_guess = 6
-
-    if wrong_guess >= max_guess:
-        clear_console()
-        print(
-            """
-     +---+
-     |   |
-     O   |
-    /|\  |
-    / \  |
-         |
-    =========""",
-        )
-        print(f'Oh no, he\'s dead! The word was "{word}".')
-    elif not 0 in solved:
-        clear_console()
-        print(f'You won! The word was "{word}".')
-    else:
-        # If not in end-state, return to main function.
-        return
-
-    again = input("Would you like to play again? (Y/N): ").upper()
-
-    if again == "N":
-        print("Thank you for playing!")
-        exit()
-    else:
-        main()
 
 
 if __name__ == "__main__":

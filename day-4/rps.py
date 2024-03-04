@@ -2,12 +2,10 @@ import random
 import os
 import csv
 
-# Todo - Add file maniulation, make a leaderboard that persists between games.
+# Todo - Update leaderboards with current stats when viewed.
 # Todo - Add an options menu where u can customize a username for the leaderboard.
 # Todo - Ascii-art for hands.
-# Todo - Repeatedly clear and draw the console, giving it a graphical effect.
 # Todo - Autoplay mode. - Game plays itself with a 1 second sleep or something.
-# Todo - Split into functions. One function for game logic, one for leaderboard, one for options, one for clearing console etc...
 # Todo - update_leaderboard should work with a temporary file.
 
 
@@ -17,19 +15,15 @@ def main():
     wins = 0
     games = 0
 
-    fields = ("name", "games", "wins")
-
-    # Create CSV-file if it doesnt exist.
-    if not os.path.isfile("leaderboard.csv"):
-        with open("leaderboard.csv", "w", newline="") as file:
-            writer = csv.DictWriter(file, fields)
-            writer.writeheader()
+    init_leaderboard()
 
     print(f"Welcome to {' '.join(choices)}!")
     username = input("What is your username?: ")
 
     while True:
-        print()
+        clear_console()
+        print("ROCK PAPER SCISSORS\n")
+
         choose = input("Make your choice: ").upper()
 
         cpu_choice = random.choice(choices)
@@ -56,17 +50,13 @@ def main():
                 print("Thank you for playing!")
                 break
             elif again == "O":
-                options()
+                options([username, games, wins])
 
-            # Clear console on new game.
-            clear_console()
         except ValueError:
             print("Invalid choice.")
 
-    display_leaderboards()
 
-
-def options():
+def options(stats: list):
     """Options menu"""
     clear_console()
 
@@ -75,10 +65,10 @@ def options():
     user_choice = input(": ")
 
     if user_choice == "1":
-        pass
-        # input("New username: ")
+        stats[0] = input("New username: ")
+        return stats
+
     elif user_choice == "2":
-        update_leaderboard()
         display_leaderboards()
 
 
@@ -94,20 +84,62 @@ def display_leaderboards():
     """Print out the leaderboard."""
     clear_console()
 
+    leaderboard = []
+
     # Open file for reading.
     with open("leaderboard.csv", "r", newline="") as file:
         reader = csv.reader(file)
         for row in reader:
-            print(row)
+            leaderboard.append(row)
+
+    def sort_wins(i):
+        """Sorts the loaderboard basen on wins."""
+        return i[2]
+
+    leaderboard.sort(reverse=True, key=sort_wins)
+    for i in leaderboard:
+        print("\t".join(i))
+
+    # Wait for user input to keep displaying leaderboard?
+    input()
 
 
 def update_leaderboard(stats: list):
     """Updates the leaderboard."""
 
-    # Append new name to leaderboard.
-    with open("leaderboard.csv", "a", newline="") as file:
+    read_file = []
+    found = 0
+
+    # Read entire leaderboard to read_file.
+    with open("leaderboard.csv", "r", newline="") as file:
+        reader = csv.reader(file)
+        for i in reader:
+            if i[0] == stats[0]:
+                i = [i[0], int(i[1]) + stats[1], int(i[2]) + stats[2]]
+                found = 1
+                read_file.append(i)
+                continue
+            read_file.append(i)
+        if found == 0:
+            read_file.append(stats)
+
+    # Here we can sort read_file tbh.
+
+    # Write read_file to leaderboard, overwriting entire file.
+    with open("leaderboard.csv", "w", newline="") as file:
         writer = csv.writer(file)
-        writer.writerow(stats)
+        writer.writerows(read_file)
+
+
+def init_leaderboard():
+
+    fields = ("name", "games", "wins")
+
+    # Create CSV-file if it doesnt exist.
+    if not os.path.isfile("leaderboard.csv"):
+        with open("leaderboard.csv", "x", newline="") as file:
+            writer = csv.DictWriter(file, fields)
+            writer.writeheader()
 
 
 if __name__ == "__main__":
