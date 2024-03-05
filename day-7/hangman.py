@@ -3,9 +3,14 @@ import random
 import requests
 import time
 
-# Todo - Keep the hangman on win-state.
-# Todo - Save word_list between runs to minimize network traffic.
 # Todo - Hints.
+# Todo - Clean up variables.
+# Todo - REFACTOR
+
+# Get the wordlist
+word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
+response = requests.get(word_site)
+words = response.content.splitlines()
 
 
 def main():
@@ -24,10 +29,14 @@ def main():
     time.sleep(1)
 
     # Init game variables
+
+    # The word to guess
     word = random_word()
+    # List of solved letters
     solved = [0] * len(word)
     max_guesses = 6
     wrong_guess = 0
+    guessed_chars = []
 
     while True:
 
@@ -35,14 +44,15 @@ def main():
         end(word, solved, wrong_guess)
 
         # Continiously draw the board.
-        draw_board(word, solved, wrong_guess)
+        draw_board(word, solved, wrong_guess, guessed_chars)
 
         # Input a guess
         guess = input("Guess a letter: ").lower().strip()
 
         # If the guess is not in the word, increment wrong guess.
-        if not guess in word:
+        if not guess in word and not guess in guessed_chars:
             wrong_guess += 1
+            guessed_chars.append(guess)
 
         # Change correct letters to solved status.
         for i, value in enumerate(word):
@@ -52,16 +62,6 @@ def main():
 
 def random_word():
     """Get a random word."""
-
-    words = []
-
-    # Save URL to word-site.
-    word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
-
-    if len(words) == 0:
-        # Get the words.
-        response = requests.get(word_site)
-    words = response.content.splitlines()
 
     word = random.choice(words)
     word = word.decode("ascii")
@@ -77,7 +77,7 @@ def clear_console():
     os.system(command)
 
 
-def draw_board(word: str, solved: list, wrong_guess: int):
+def draw_board(word: str, solved: list, wrong_guess: int, guessed_chars: list):
     """Draws the hangman"""
 
     clear_console()
@@ -93,6 +93,9 @@ def draw_board(word: str, solved: list, wrong_guess: int):
             print(f"{value} ", end="")
         else:
             print("_ ", end="")
+    print(f"\tGuessed: ", end="")
+    for i in guessed_chars:
+        print(f"{i} ", end="")
     print()
 
 

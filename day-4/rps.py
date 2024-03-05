@@ -7,6 +7,7 @@ import csv
 # Todo - Ascii-art for hands.
 # Todo - Autoplay mode. - Game plays itself with a 1 second sleep or something.
 # Todo - update_leaderboard should work with a temporary file.
+# Todo - REFACTOR
 
 
 def main():
