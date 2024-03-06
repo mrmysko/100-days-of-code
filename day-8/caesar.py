@@ -17,15 +17,22 @@ def main():
     print(crypt(encode_decode, message, shift))
 
 
-def crypt(type: str, message: str, shift: int):
+def crypt(type: str, message: list, shift: int):
+    message = message.split()
     out_message = []
 
     if type == "encode":
-        out_message = [chr(ord(x) + shift) for x in message]
+        for i in message:
+            temp = [chr(ord(x) + shift) for x in i]
+            out_message.append("".join(temp))
+        # out_message = [chr(ord(x) + shift) for x in message]
     elif type == "decode":
-        out_message = [chr(ord(x) - shift) for x in message]
+        for i in message:
+            temp = [chr(ord(x) - shift) for x in i]
+            out_message.append("".join(temp))
+        # out_message = [chr(ord(x) - shift) for x in message]
 
-    out_message = "".join(out_message)
+    out_message = " ".join(out_message)
     return out_message
 
 
